@@ -10,11 +10,13 @@ option(build_tools "Build dbcppp utility application" ON)
 
 option(build_tests "Build tests" ON)
 option(build_examples "Build examples" ON)
+option(system_boost "Use system boost" OFF)
 
 
 # DEPENDENCIES & Requirements
-
-find_package(Boost)
+if (system_boost)
+    find_package(Boost)
+endif()
 
 if(NOT Boost_FOUND)
     message(WARNING "Boost not found. Using libdbcppp boost (third-party/boost)")
