@@ -7,11 +7,10 @@ project("dbcppp" VERSION 3.8.0)
 set(CMAKE_CXX_STANDARD 17)
 option(build_kcd "Enable support for KCD parsing" OFF)
 option(build_tools "Build dbcppp utility application" OFF)
-
 option(build_tests "Build tests" OFF)
 option(build_examples "Build examples" OFF)
 option(system_boost "Use system boost" OFF)
-
+option(BUILD_STATIC "Build as a static library" OFF)
 
 # DEPENDENCIES & Requirements
 if (system_boost)
@@ -56,7 +55,11 @@ file(GLOB include "include/dbcppp/*.h")
 file(GLOB headers "src/*.h")
 file(GLOB sources "src/*.cpp")
 
-add_library(${PROJECT_NAME} SHARED ${include} ${headers} ${sources})
+if (BUILD_STATIC)
+    add_library(${PROJECT_NAME} STATIC ${include} ${headers} ${sources})
+else()
+    add_library(${PROJECT_NAME} SHARED ${include} ${headers} ${sources})
+endif()
 
 
 # CONFIGURE LIBRARY
