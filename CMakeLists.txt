@@ -14,38 +14,38 @@ option(BUILD_STATIC "Build as a static library" OFF)
 
 # DEPENDENCIES & Requirements
 if (system_boost)
-    find_package(Boost)
+  find_package(Boost)
 endif()
 
 if(NOT Boost_FOUND)
-    message(WARNING "Boost not found. Using libdbcppp boost (third-party/boost)")
-    include_directories("third-party/boost")
+  message(WARNING "Boost not found. Using libdbcppp boost (third-party/boost)")
+  include_directories("third-party/boost")
 endif()
 
 # kcd is an xml based can database
 message("kcd enabled: ${build_kcd}")
 
 if(build_kcd)
-    add_compile_definitions(ENABLE_KCD)
+  add_compile_definitions(ENABLE_KCD)
 
-    # LibXml2
+  # LibXml2
 
-    find_package(LibXml2)
+  find_package(LibXml2)
 
-    if (NOT LibXml2_FOUND)
-        message(WARNING "LibXml2 was not found. Using libdbcppp LibXml2 (third-party/libxml2)")
-        set(LIBXML2_WITH_ICONV OFF)
-        set(LIBXML2_WITH_LZMA OFF)
-        set(LIBXML2_WITH_PYTHON OFF)
-        set(LIBXML2_WITH_ZLIB OFF)
-        set(LIBXML2_WITH_TESTS OFF)
-        add_subdirectory(third-party/libxml2)
-    endif()
+  if (NOT LibXml2_FOUND)
+    message(WARNING "LibXml2 was not found. Using libdbcppp LibXml2 (third-party/libxml2)")
+    set(LIBXML2_WITH_ICONV OFF)
+    set(LIBXML2_WITH_LZMA OFF)
+    set(LIBXML2_WITH_PYTHON OFF)
+    set(LIBXML2_WITH_ZLIB OFF)
+    set(LIBXML2_WITH_TESTS OFF)
+    add_subdirectory(third-party/libxml2)
+  endif()
 
-    # libxmlmm (no find package because it is certainly not installed
+  # libxmlmm (no find package because it is certainly not installed
 
-    add_subdirectory("third-party/libxmlmm")
-    target_include_directories(libxmlmm PUBLIC third-party/libxmlmm/libxmlmm ${LIBXML2_INCLUDE_DIR})
+  add_subdirectory("third-party/libxmlmm")
+  target_include_directories(libxmlmm PUBLIC third-party/libxmlmm/libxmlmm ${LIBXML2_INCLUDE_DIR})
 endif()
 
 
@@ -56,16 +56,16 @@ file(GLOB headers "src/*.h")
 file(GLOB sources "src/*.cpp")
 
 if (BUILD_STATIC)
-    add_library(${PROJECT_NAME} STATIC ${include} ${headers} ${sources})
+  add_library(${PROJECT_NAME} STATIC ${include} ${headers} ${sources})
 else()
-    add_library(${PROJECT_NAME} SHARED ${include} ${headers} ${sources})
+  add_library(${PROJECT_NAME} SHARED ${include} ${headers} ${sources})
 endif()
 
 
 # CONFIGURE LIBRARY
 
 if (build_kcd)
-    target_link_libraries(${PROJECT_NAME} PUBLIC libxmlmm)
+  target_link_libraries(${PROJECT_NAME} PUBLIC libxmlmm)
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -88,12 +88,42 @@ install(TARGETS ${PROJECT_NAME}
     PUBLIC_HEADER DESTINATION include/dbcppp
 )
 
+# Export the targets for use with find_package
+install(EXPORT dbcpppTargets
+    FILE dbcpppTargets.cmake
+    NAMESPACE dbcppp::
+    DESTINATION lib/cmake/dbcppp
+)
+
+include(CMakePackageConfigHelpers)
+
+# Generate a version file for the package configuration
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY AnyNewerVersion
+)
+
+# Configure the package configuration file.
+# Create a file called "cmake/dbcpppConfig.cmake.in" in your source tree with the contents shown below.
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/dbcpppConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfig.cmake"
+  INSTALL_DESTINATION lib/cmake/dbcppp
+)
+
+# Install the package configuration files
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfigVersion.cmake"
+  DESTINATION lib/cmake/dbcppp
+)
+
 
 # ADDITIONAL: Tools, Tests & Examples
 
 if (build_tools)
-    add_subdirectory(third-party/cxxopts)
-    add_subdirectory(tools/dbcppp)
+  add_subdirectory(third-party/cxxopts)
+  add_subdirectory(tools/dbcppp)
 endif()
 
 if (build_tests)
