@@ -323,7 +323,7 @@ static auto getSignalMultiplexerValues(const G_Network& gnet, const std::string&
             std::vector<ISignalMultiplexerValue::Range> value_ranges;
             for (const auto& r : gsmv.value_ranges)
             {
-                value_ranges.push_back({r.from, r.to});
+                value_ranges.push_back({static_cast<size_t>(r.from), static_cast<size_t>(r.to)});
             }
             auto signal_multiplexer_value = ISignalMultiplexerValue::Create(
                   std::move(switch_name)
