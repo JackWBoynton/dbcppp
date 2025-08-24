@@ -7,7 +7,7 @@
 #include "Export.h"
 #include "Iterator.h"
 #include "Node.h"
-#include "Signal.h"
+#include "DSignal.h"
 #include "Attribute.h"
 #include "SignalGroup.h"
 
