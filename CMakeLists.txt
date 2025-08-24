@@ -5,12 +5,12 @@ project("dbcppp" VERSION 3.8.0)
 # CONFIGURATION
 
 set(CMAKE_CXX_STANDARD 17)
-option(build_kcd "Enable support for KCD parsing" OFF)
-option(build_tools "Build dbcppp utility application" OFF)
-option(build_tests "Build tests" OFF)
-option(build_examples "Build examples" OFF)
-option(system_boost "Use system boost" OFF)
-option(BUILD_STATIC "Build as a static library" OFF)
+option(DBCPPP_build_kcd "Enable support for KCD parsing" OFF)
+option(DBCPPP_build_tools "Build dbcppp utility application" OFF)
+option(DBCPPP_build_tests "Build tests" OFF)
+option(DBCPPP_build_examples "Build examples" OFF)
+option(DBCPPP_system_boost "Use system boost" OFF)
+option(DBCPPP_BUILD_STATIC "Build as a static library" OFF)
 
 # DEPENDENCIES & Requirements
 if (system_boost)
@@ -23,9 +23,9 @@ if(NOT Boost_FOUND)
 endif()
 
 # kcd is an xml based can database
-message("kcd enabled: ${build_kcd}")
+message("kcd enabled: ${DBCPPP_build_kcd}")
 
-if(build_kcd)
+if(DBCPPP_build_kcd)
   add_compile_definitions(ENABLE_KCD)
 
   # LibXml2
@@ -55,7 +55,7 @@ file(GLOB include "include/dbcppp/*.h")
 file(GLOB headers "src/*.h")
 file(GLOB sources "src/*.cpp")
 
-if (BUILD_STATIC)
+if (DBCPPP_BUILD_STATIC)
   add_library(${PROJECT_NAME} STATIC ${include} ${headers} ${sources})
 else()
   add_library(${PROJECT_NAME} SHARED ${include} ${headers} ${sources})
@@ -64,7 +64,7 @@ endif()
 
 # CONFIGURE LIBRARY
 
-if (build_kcd)
+if (DBCPPP_build_kcd)
   target_link_libraries(${PROJECT_NAME} PUBLIC libxmlmm)
 endif()
 
@@ -122,16 +122,16 @@ install(FILES
 
 # ADDITIONAL: Tools, Tests & Examples
 
-if (build_tools)
+if (DBCPPP_build_tools)
   add_subdirectory(third-party/cxxopts)
   add_subdirectory(tools/dbcppp)
 endif()
 
-if (build_tests)
+if (DBCPPP_build_tests)
   add_subdirectory(tests)
 endif()
 
-if (build_examples)
+if (DBCPPP_build_examples)
   add_subdirectory(examples)
 endif()
 
