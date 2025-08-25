@@ -61,6 +61,16 @@ else()
   add_library(${PROJECT_NAME} SHARED ${include} ${headers} ${sources})
 endif()
 
+if (DBCPPP_BUILD_STATIC)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC
+    DBCPPP_STATIC           # common pattern in projects: switch off dllexport/dllimport
+    DBCPPP_API=             # belt-and-suspenders: blank out API decoration if used
+  )
+else()
+  target_compile_definitions(${PROJECT_NAME} PRIVATE
+    DBCPPP_EXPORTS          # common pattern for export when building the DLL
+  )
+endif()
 
 # CONFIGURE LIBRARY
 
