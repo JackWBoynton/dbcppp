@@ -57,8 +57,10 @@ file(GLOB sources "src/*.cpp")
 
 if (DBCPPP_BUILD_STATIC)
   add_library(${PROJECT_NAME} STATIC ${include} ${headers} ${sources})
+  target_compile_definitions(${PROJECT_NAME} PUBLIC DBCPPP_STATIC_DEFINE)
 else()
   add_library(${PROJECT_NAME} SHARED ${include} ${headers} ${sources})
+  target_compile_definitions(${PROJECT_NAME} PRIVATE DBCPPP_EXPORT)
 endif()
 
 if (DBCPPP_BUILD_STATIC)
