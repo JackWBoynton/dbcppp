@@ -11,6 +11,7 @@ option(DBCPPP_build_tests "Build tests" OFF)
 option(DBCPPP_build_examples "Build examples" OFF)
 option(DBCPPP_system_boost "Use system boost" OFF)
 option(DBCPPP_BUILD_STATIC "Build as a static library" OFF)
+option(DBCPPP_INSTALL "Generate installation target" ON)
 
 # DEPENDENCIES & Requirements
 if (system_boost)
@@ -82,43 +83,45 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 # INSTALL LIBRARY
 
-install(TARGETS ${PROJECT_NAME}
-    EXPORT dbcpppTargets
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    PUBLIC_HEADER DESTINATION include/dbcppp
-)
+if (DBCPPP_INSTALL)
+  install(TARGETS ${PROJECT_NAME}
+      EXPORT dbcpppTargets
+      RUNTIME DESTINATION bin
+      LIBRARY DESTINATION lib
+      ARCHIVE DESTINATION lib
+      PUBLIC_HEADER DESTINATION include/dbcppp
+  )
 
 # Export the targets for use with find_package
-install(EXPORT dbcpppTargets
-    FILE dbcpppTargets.cmake
-    NAMESPACE dbcppp::
-    DESTINATION lib/cmake/dbcppp
-)
+  install(EXPORT dbcpppTargets
+      FILE dbcpppTargets.cmake
+      NAMESPACE dbcppp::
+      DESTINATION lib/cmake/dbcppp
+  )
 
-include(CMakePackageConfigHelpers)
+  include(CMakePackageConfigHelpers)
 
 # Generate a version file for the package configuration
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfigVersion.cmake"
-  VERSION ${PROJECT_VERSION}
-  COMPATIBILITY AnyNewerVersion
-)
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+  )
 
 # Configure the package configuration file.
 # Create a file called "cmake/dbcpppConfig.cmake.in" in your source tree with the contents shown below.
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/dbcpppConfig.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfig.cmake"
-  INSTALL_DESTINATION lib/cmake/dbcppp
-)
+  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/dbcpppConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfig.cmake"
+    INSTALL_DESTINATION lib/cmake/dbcppp
+  )
 
 # Install the package configuration files
-install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfig.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfigVersion.cmake"
-  DESTINATION lib/cmake/dbcppp
-)
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/dbcpppConfigVersion.cmake"
+    DESTINATION lib/cmake/dbcppp
+  )
+endif()
 
 
 # ADDITIONAL: Tools, Tests & Examples
